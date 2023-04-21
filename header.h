@@ -39,4 +39,29 @@ public:
 	void printBook();
 };
 
+class PotRow
+{
+	const int POTS_COUNT;
+	Plant** plants;
+public:
+	PotRow(int newPotsCount);
+	PotRow(PotRow const& obj);
+	PotRow& operator=(PotRow const& obj);
+	~PotRow();
+
+	void fillPot(int pos, Plant plant);//future implementation
+	void emptyPot(int pos);//future implementation
+};
+
+class Greenhouse
+{
+	PlantsBook GHBook;
+	PotRow sunnyRow;
+	PotRow neutralRow;
+	PotRow shadowyRow;
+public:
+	Greenhouse(PlantsBook newBook, int sunnRowCap, int neutralRowCap, int shadowyRowCap);
+	Greenhouse(Greenhouse const& obj);
+};
+
 #endif // !HEADER

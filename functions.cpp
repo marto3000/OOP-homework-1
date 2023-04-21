@@ -236,3 +236,57 @@ void PlantsBook::printBook()
 		std::cout << plants[i]->giveWatering() << std::endl;
 	}
 }
+
+//POT_ROW
+
+PotRow::PotRow(int newPotsCount) : POTS_COUNT(newPotsCount)
+{
+	plants = new Plant * [POTS_COUNT];
+}
+
+PotRow::PotRow(PotRow const& obj) : POTS_COUNT(obj.POTS_COUNT)
+{
+	plants = new Plant * [POTS_COUNT];
+}
+
+PotRow& PotRow::operator=(PotRow const& obj)
+{
+	if (POTS_COUNT != obj.POTS_COUNT)
+	{
+		throw std::exception("different row lengths");
+	}
+	for (int i = 0; i < POTS_COUNT; i++)
+	{
+		if (!plants[i])
+		{
+			plants[i] = obj.plants[i];
+		}
+	}
+	return *this;
+}
+
+PotRow::~PotRow()
+{
+	for (int i = 0; i < POTS_COUNT; i++)
+	{
+		if (!plants[i])
+		{
+			delete[] plants[i];
+			plants[i] = nullptr;
+		}
+	}
+	delete[] plants;
+	plants = nullptr;
+}
+
+//GREENHOUSE
+
+Greenhouse::Greenhouse(PlantsBook newBook, int sunnRowCap, int neutralRowCap, int shadowyRowCap) : GHBook(newBook), sunnyRow(sunnRowCap), neutralRow(neutralRowCap), shadowyRow(shadowyRowCap)
+{
+
+}
+
+Greenhouse::Greenhouse(Greenhouse const& obj) : GHBook(obj.GHBook), sunnyRow(obj.sunnyRow), neutralRow(obj.neutralRow), shadowyRow(obj.shadowyRow)
+{
+
+}
