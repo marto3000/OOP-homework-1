@@ -172,7 +172,7 @@ void PlantsBook::addPlant(char* newName, char newSunPrefference[MAX_SUN_PREF_LEN
 {
 	for (int i = 0; i < count; i++)
 	{
-		if (plants[i]->giveName() == newName)
+		if (!strcmp(plants[i]->giveName(), newName))
 		{
 			throw std::exception("the plant already exists");
 		}
@@ -216,6 +216,12 @@ void PlantsBook::addPlant(char* newName, char newSunPrefference[MAX_SUN_PREF_LEN
 	tempPlants = nullptr;
 }
 
+void PlantsBook::addNewPlant(char* newName, char newSunPrefference[MAX_SUN_PREF_LENG], int newWatering)
+{
+	addPlant(newName, newSunPrefference, newWatering);
+	bookWrite();
+}
+
 bool PlantsBook::inputNewPlant(char* plant, char* newPlant)
 {
 	if (strcmp(plant, newPlant) == 1)
@@ -255,6 +261,17 @@ int PlantsBook::giveCount()
 {
 	return count;
 }
+
+//void PlantsBook::plantDelete(int pos)
+//{
+//	delete plants[pos];
+//	for (int i = pos - 1; i < count - 1; i++)
+//	{
+//		plants[i] = plants[i + 1];
+//	}
+//	plants[count - 1] = nullptr;
+//	count--;
+//}
 
 //POT_ROW
 

@@ -34,11 +34,14 @@ public:
 	void bookRead();
 	void bookWrite();
 	void addPlant(char* newName, char newSunPrefference[MAX_SUN_PREF_LENG], int newWatering);
+	void addNewPlant(char* newName, char newSunPrefference[MAX_SUN_PREF_LENG], int newWatering);
 	bool inputNewPlant(char* plant, char* newPlant);
 	void printBook();
 	Plant givePlant(int pos);
 	char* givePlantName(int pos);
 	int giveCount();
+
+	//void plantDelete(int pos);//temp function
 };
 
 class PotRow
