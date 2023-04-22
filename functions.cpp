@@ -38,7 +38,6 @@ Plant::~Plant()
 {
 	delete[] name;
 	name = nullptr;
-	std::cout << "deleted plant";
 }
 
 char* Plant::giveName()
@@ -94,7 +93,7 @@ PlantsBook::~PlantsBook()
 {
 	for (int i = 0; i < count; i++)
 	{
-		delete[] plants[i];
+		delete plants[i];
 		plants[i] = nullptr;
 	}
 	delete[] plants;
@@ -191,6 +190,11 @@ void PlantsBook::addPlant(char* newName, char newSunPrefference[MAX_SUN_PREF_LEN
 		bool newPlantAdded = false;
 		for (int i = 0; i < count; i++)
 		{
+			if (!newPlantAdded && i == count - 1)
+			{
+				plants[i] = newPlant;
+				break;
+			}
 			if (newPlantAdded)
 			{
 				plants[i] = tempPlants[i - 1];
@@ -237,6 +241,21 @@ void PlantsBook::printBook()
 	}
 }
 
+Plant PlantsBook::givePlant(int pos)
+{
+	return *plants[pos];
+}
+
+char* PlantsBook::givePlantName(int pos)
+{
+	return plants[pos]->giveName();
+}
+
+int PlantsBook::giveCount()
+{
+	return count;
+}
+
 //POT_ROW
 
 PotRow::PotRow(int newPotsCount) : POTS_COUNT(newPotsCount)
@@ -279,6 +298,49 @@ PotRow::~PotRow()
 	plants = nullptr;
 }
 
+void PotRow::add(int pos, Plant addPlant)
+{
+	Plant* newPlant = new Plant(addPlant);
+	plants[pos] = newPlant;
+	newPlant = nullptr;
+}
+
+void PotRow::remove(int pos)
+{
+	if (plants[pos] != nullptr)
+	{
+		delete plants[pos];
+		plants[pos] = nullptr;
+	}
+	else
+	{
+		std::cout << "the pot is already empty" << std::endl;
+	}
+}
+
+int PotRow::findEmptyPot()
+{
+	for (int i = 0; i < POTS_COUNT; i++)
+	{
+		if (plants[i] == nullptr)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+void PotRow::printRow()
+{
+	std::cout << POTS_COUNT << std::endl;
+	for (int i = 0; i < POTS_COUNT; i++)
+	{
+		std::cout << plants[i]->giveName() << std::endl;
+		std::cout << plants[i]->giveSunPref() << std::endl;
+		std::cout << plants[i]->giveWatering() << std::endl;
+	}
+}
+
 //GREENHOUSE
 
 Greenhouse::Greenhouse(PlantsBook newBook, int sunnRowCap, int neutralRowCap, int shadowyRowCap) : GHBook(newBook), sunnyRow(sunnRowCap), neutralRow(neutralRowCap), shadowyRow(shadowyRowCap)
@@ -289,4 +351,145 @@ Greenhouse::Greenhouse(PlantsBook newBook, int sunnRowCap, int neutralRowCap, in
 Greenhouse::Greenhouse(Greenhouse const& obj) : GHBook(obj.GHBook), sunnyRow(obj.sunnyRow), neutralRow(obj.neutralRow), shadowyRow(obj.shadowyRow)
 {
 
+}
+
+void Greenhouse::fillPot(char* plantName)
+{
+	bool plantCheck = false;
+	int plantPos;
+	for (int i = 0; i < GHBook.giveCount(); i++)
+	{
+		if (!strcmp(plantName, GHBook.givePlantName(i)))
+		{
+			plantCheck = true;
+			plantPos = i;
+			break;
+		}
+	}
+	if (!plantCheck)
+	{
+		std::cout << "The plant was not found in the book";
+		throw std::exception("The plant was not found in the book");
+	}
+	Plant addPlant(GHBook.givePlant(plantPos));
+	char plantSunPref[MAX_SUN_PREF_LENG];
+	strcpy_s(plantSunPref, MAX_SUN_PREF_LENG, addPlant.giveSunPref());
+	if (sunnyRow.findEmptyPot() == -1 && neutralRow.findEmptyPot() == -1 && shadowyRow.findEmptyPot() == -1)
+	{
+		throw std::exception("no empty space");
+	}
+	int emptyPos;
+	if (!strcmp(plantSunPref, "sunny"))
+	{
+		emptyPos = sunnyRow.findEmptyPot();
+		if (emptyPos == -1)
+		{
+			emptyPos = neutralRow.findEmptyPot();
+			if (emptyPos == -1)
+			{
+				emptyPos = shadowyRow.findEmptyPot();
+				int changedWatering = addPlant.giveWatering() + 2;
+				Plant changedPlant(addPlant.giveName(), addPlant.giveSunPref(), changedWatering);
+				shadowyRow.add(emptyPos, changedPlant);
+			}
+			else
+			{
+				int changedWatering = addPlant.giveWatering() + 1;
+				Plant changedPlant(addPlant.giveName(), addPlant.giveSunPref(), changedWatering);
+				neutralRow.add(emptyPos, changedPlant);
+			}
+		}
+		else
+		{
+			sunnyRow.add(emptyPos, addPlant);
+		}
+	}
+	else if (!strcmp(plantSunPref, "neutral"))
+	{
+		emptyPos = neutralRow.findEmptyPot();
+		if (emptyPos == -1)
+		{
+			emptyPos = sunnyRow.findEmptyPot();
+			if (emptyPos == -1)
+			{
+				emptyPos = shadowyRow.findEmptyPot();
+				int changedWatering = addPlant.giveWatering() + 1;
+				Plant changedPlant(addPlant.giveName(), addPlant.giveSunPref(), changedWatering);
+				shadowyRow.add(emptyPos, changedPlant);
+			}
+			else
+			{
+				int changedWatering = addPlant.giveWatering() - 1;
+				if (changedWatering < 1)
+				{
+					changedWatering = 1;
+				}
+				Plant changedPlant(addPlant.giveName(), addPlant.giveSunPref(), changedWatering);
+				sunnyRow.add(emptyPos, changedPlant);
+			}
+		}
+		else
+		{
+			neutralRow.add(emptyPos, addPlant);
+		}
+	}
+	else if (!strcmp(plantSunPref, "shadowy"))
+	{
+		emptyPos = shadowyRow.findEmptyPot();
+		if (emptyPos == -1)
+		{
+			emptyPos = neutralRow.findEmptyPot();
+			if (emptyPos == -1)
+			{
+				emptyPos = sunnyRow.findEmptyPot();
+				int changedWatering = addPlant.giveWatering() - 2;
+				if (changedWatering < 1)
+				{
+					changedWatering = 1;
+				}
+				Plant changedPlant(addPlant.giveName(), addPlant.giveSunPref(), changedWatering);
+				sunnyRow.add(emptyPos, changedPlant);
+			}
+			else
+			{
+				int changedWatering = addPlant.giveWatering() - 1;
+				if (changedWatering < 1)
+				{
+					changedWatering = 1;
+				}
+				Plant changedPlant(addPlant.giveName(), addPlant.giveSunPref(), changedWatering);
+				neutralRow.add(emptyPos, changedPlant);
+			}
+		}
+		else
+		{
+			shadowyRow.add(emptyPos, addPlant);
+		}
+	}
+}
+
+void Greenhouse::emptyPot(char* potRow, int pos)
+{
+	if (!strcmp(potRow, "sunny"))
+	{
+		sunnyRow.remove(pos);
+	}
+	else if (!strcmp(potRow, "neutral"))
+	{
+		neutralRow.remove(pos);
+	}
+	else
+	{
+		shadowyRow.remove(pos);
+	}
+}
+
+void Greenhouse::printGH()
+{
+	std::cout << "sunny row --------------------" << std::endl;
+	sunnyRow.printRow();
+	std::cout << "neutral row ------------------" << std::endl;
+	neutralRow.printRow();
+	std::cout << "shadowy row ------------------" << std::endl;
+	shadowyRow.printRow();
 }

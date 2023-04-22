@@ -33,10 +33,12 @@ public:
 
 	void bookRead();
 	void bookWrite();
-	//void addPlantFromUser();
 	void addPlant(char* newName, char newSunPrefference[MAX_SUN_PREF_LENG], int newWatering);
 	bool inputNewPlant(char* plant, char* newPlant);
 	void printBook();
+	Plant givePlant(int pos);
+	char* givePlantName(int pos);
+	int giveCount();
 };
 
 class PotRow
@@ -49,8 +51,10 @@ public:
 	PotRow& operator=(PotRow const& obj);
 	~PotRow();
 
-	void fillPot(int pos, Plant plant);//future implementation
-	void emptyPot(int pos);//future implementation
+	void add(int pos, Plant addPlant);
+	void remove(int pos);
+	int findEmptyPot();
+	void printRow();
 };
 
 class Greenhouse
@@ -62,6 +66,10 @@ class Greenhouse
 public:
 	Greenhouse(PlantsBook newBook, int sunnRowCap, int neutralRowCap, int shadowyRowCap);
 	Greenhouse(Greenhouse const& obj);
+
+	void fillPot(char* plantName);
+	void emptyPot(char* potRow, int pos);
+	void printGH();
 };
 
 #endif // !HEADER
