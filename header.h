@@ -10,7 +10,7 @@ class Plant
 	char sunPrefference[MAX_SUN_PREF_LENG];
 	int watering;
 public:
-	Plant(char* newName, char newSunPrefference[MAX_SUN_PREF_LENG], int newWatering);
+	Plant(const char* newName, const char newSunPrefference[MAX_SUN_PREF_LENG], int newWatering);
 	Plant(Plant const& obj);
 	Plant& operator=(Plant const& obj);
 	~Plant();
@@ -26,7 +26,7 @@ class PlantsBook
 	char bookName[MAX_FILE_NAME_LENG];
 	int count;
 public:
-	PlantsBook(char newBookName[MAX_FILE_NAME_LENG]);
+	PlantsBook(const char newBookName[MAX_FILE_NAME_LENG]);
 	PlantsBook(PlantsBook const& obj);
 	PlantsBook& operator=(PlantsBook const& obj);
 	~PlantsBook();
@@ -70,8 +70,8 @@ public:
 	Greenhouse(PlantsBook newBook, int sunnRowCap, int neutralRowCap, int shadowyRowCap);
 	Greenhouse(Greenhouse const& obj);
 
-	void fillPot(char* plantName);
-	void emptyPot(char* potRow, int pos);
+	void fillPot(const char* plantName);
+	void emptyPot(const char* potRow, int pos);
 	void printGH();
 };
 

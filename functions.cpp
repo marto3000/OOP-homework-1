@@ -4,7 +4,7 @@
 
 //PLANT
 
-Plant::Plant(char* newName, char newSunPrefference[MAX_SUN_PREF_LENG], int newWatering)
+Plant::Plant(const char* newName, const char newSunPrefference[MAX_SUN_PREF_LENG], int newWatering)
 {
 	int nameLeng = strlen(newName) + 1;
 	name = new char[nameLeng];
@@ -57,7 +57,7 @@ int Plant::giveWatering()
 
 //PLANTS_BOOK
 
-PlantsBook::PlantsBook(char newBookName[MAX_FILE_NAME_LENG])
+PlantsBook::PlantsBook(const char newBookName[MAX_FILE_NAME_LENG])
 {
 	strcpy_s(bookName, MAX_FILE_NAME_LENG, newBookName);
 	count = 0;
@@ -278,11 +278,19 @@ int PlantsBook::giveCount()
 PotRow::PotRow(int newPotsCount) : POTS_COUNT(newPotsCount)
 {
 	plants = new Plant * [POTS_COUNT];
+	for (int i = 0; i < POTS_COUNT; i++)
+	{
+		plants[i] = nullptr;
+	}
 }
 
 PotRow::PotRow(PotRow const& obj) : POTS_COUNT(obj.POTS_COUNT)
 {
 	plants = new Plant * [POTS_COUNT];
+	for (int i = 0; i < POTS_COUNT; i++)
+	{
+		plants[i] = nullptr;
+	}
 }
 
 PotRow& PotRow::operator=(PotRow const& obj)
@@ -349,12 +357,23 @@ int PotRow::findEmptyPot()
 
 void PotRow::printRow()
 {
-	std::cout << POTS_COUNT << std::endl;
+	std::cout << POTS_COUNT << std::endl << std::endl;
 	for (int i = 0; i < POTS_COUNT; i++)
 	{
-		std::cout << plants[i]->giveName() << std::endl;
-		std::cout << plants[i]->giveSunPref() << std::endl;
-		std::cout << plants[i]->giveWatering() << std::endl;
+		if (plants[i] == nullptr)
+		{
+			std::cout << "no plant" << std::endl;
+			std::cout << "x" << std::endl;
+			std::cout << "x" << std::endl;
+			std::cout << std::endl;
+		}
+		else
+		{
+			std::cout << plants[i]->giveName() << std::endl;
+			std::cout << plants[i]->giveSunPref() << std::endl;
+			std::cout << plants[i]->giveWatering() << std::endl;
+			std::cout << std::endl;
+		}
 	}
 }
 
@@ -370,7 +389,7 @@ Greenhouse::Greenhouse(Greenhouse const& obj) : GHBook(obj.GHBook), sunnyRow(obj
 
 }
 
-void Greenhouse::fillPot(char* plantName)
+void Greenhouse::fillPot(const char* plantName)
 {
 	bool plantCheck = false;
 	int plantPos;
@@ -485,7 +504,7 @@ void Greenhouse::fillPot(char* plantName)
 	}
 }
 
-void Greenhouse::emptyPot(char* potRow, int pos)
+void Greenhouse::emptyPot(const char* potRow, int pos)
 {
 	if (!strcmp(potRow, "sunny"))
 	{
@@ -503,10 +522,10 @@ void Greenhouse::emptyPot(char* potRow, int pos)
 
 void Greenhouse::printGH()
 {
-	std::cout << "sunny row --------------------" << std::endl;
+	std::cout << "sunny row --------------------" << std::endl << std::endl;
 	sunnyRow.printRow();
-	std::cout << "neutral row ------------------" << std::endl;
+	std::cout << "neutral row ------------------" << std::endl << std::endl;
 	neutralRow.printRow();
-	std::cout << "shadowy row ------------------" << std::endl;
+	std::cout << "shadowy row ------------------" << std::endl << std::endl;
 	shadowyRow.printRow();
 }
